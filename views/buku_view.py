@@ -5,10 +5,9 @@ class BukuView(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Sistem Manajemen Perpustakaan")
-        self.geometry("820x450")
+        self.geometry("850x500")
         ctk.set_appearance_mode("System")
 
-        # Konfigurasi Grid Utama (Panel Kiri: Form, Panel Kanan: Tabel)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=2)
         self.grid_rowconfigure(0, weight=1)
@@ -44,7 +43,35 @@ class BukuView(ctk.CTk):
             hover_color="#218838",
             width=220
         )
-        self.btn_simpan.pack(pady=15, padx=15)
+        self.btn_simpan.pack(pady=(15, 6), padx=15)
+
+        self.btn_perbarui = ctk.CTkButton(
+            self.frame_kiri,
+            text="Perbarui Data",
+            fg_color="#ffc107",
+            hover_color="#e0a800",
+            text_color="black",
+            width=220
+        )
+        self.btn_perbarui.pack(pady=6, padx=15)
+
+        self.btn_hapus = ctk.CTkButton(
+            self.frame_kiri,
+            text="Hapus Data",
+            fg_color="#dc3545",
+            hover_color="#c82333",
+            width=220
+        )
+        self.btn_hapus.pack(pady=6, padx=15)
+
+        self.btn_logout = ctk.CTkButton(
+            self.frame_kiri,
+            text="Logout",
+            fg_color="#495057",
+            hover_color="#343a40",
+            width=220
+        )
+        self.btn_logout.pack(side="bottom", pady=15, padx=15)
 
         # === PANEL KANAN: TABEL DAFTAR KOLEKSI BUKU ===
         self.frame_kanan = ctk.CTkFrame(self)
@@ -75,10 +102,22 @@ class BukuView(ctk.CTk):
             self.entry_tahun.get().strip(),
         )
 
+    def set_input_data(self, judul, penulis, tahun):
+        self.clear_input()
+        self.entry_judul.insert(0, str(judul))
+        self.entry_penulis.insert(0, str(penulis))
+        self.entry_tahun.insert(0, str(tahun))
+
     def clear_input(self):
         self.entry_judul.delete(0, "end")
         self.entry_penulis.delete(0, "end")
         self.entry_tahun.delete(0, "end")
+
+    def get_selected_buku(self):
+        selected = self.tree.selection()
+        if not selected:
+            return None
+        return self.tree.item(selected[0], "values")
 
     def tampilkan_data(self, data_buku):
         for item in self.tree.get_children():
@@ -95,6 +134,5 @@ class BukuView(ctk.CTk):
     def show_error(self, pesan):
         messagebox.showerror("Peringatan", pesan)
 
-if __name__ == "__main__":
-    app = BukuView()
-    app.mainloop()
+    def ask_confirm(self, pesan):
+        return messagebox.askyesno("Konfirmasi", pesan)

@@ -34,3 +34,20 @@ def test_simpan_buku_input_kosong():
     # Assert
     mock_model.create_buku.assert_not_called()
     mock_view.show_error.assert_called_once_with("Semua kolom harus diisi!")
+
+def test_get_all_buku():
+    # Arrange
+    mock_model = MagicMock()
+    mock_view = MagicMock()
+    data_dummy = [
+        {"id_buku": 1, "judul": "Laskar Pelangi", "penulis": "Andrea Hirata", "tahun_terbit": 2005},
+        {"id_buku": 2, "judul": "Bumi Manusia", "penulis": "Pramoedya Ananta Toer", "tahun_terbit": 1980},
+    ]
+    mock_model.get_all_buku.return_value = data_dummy
+
+    # Act
+    controller = BukuController(model=mock_model, view=mock_view)
+
+    # Assert
+    mock_model.get_all_buku.assert_called_once()
+    mock_view.tampilkan_data.assert_called_once_with(data_dummy)

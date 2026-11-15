@@ -9,6 +9,25 @@ class UserModel:
     def hash_password(self, password):
         return hashlib.sha256(password.encode("utf-8")).hexdigest()
 
+    def register_user(self, username, password, role="anggota"):
+        conn = self.db.get_connection()
+        if not conn:
+            return False
+        try:
+            hashed_pw = self.hash_password(password)
+            cursor = conn.cursor()
+            query = "INSERT INTO users (username, password, role) VALUES (%s, %s, %s)"
+            cursor.execute(query, (username, hashed_pw, role))
+            conn.commit()
+            return True
+        except Error as e:
+            conn.rollback()
+            print(f"Gagal mendaftarkan pengguna: {e}")
+            return False
+        finally:
+            cursor.close()
+            conn.close()
+
     def verify_user(self, username, password):
         conn = self.db.get_connection()
         if not conn:
